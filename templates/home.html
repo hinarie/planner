@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Приветствие -->
+    <div class="col-md-12 mb-4">
+        <div class="card bg-light">
+            <div class="card-body text-center">
+                <h1 class="display-4">Добро пожаловать, {{ user.name }}!</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Заметки -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-journal-text"></i> Последние заметки</h5>
+            </div>
+            <div class="card-body">
+                {% if personal_notes %}
+                    <div class="list-group">
+                        {% for note in personal_notes[:3] %}
+                        <a href="{{ url_for('note.view_note', id=note.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ note.title }}</h6>
+                                <small>{{ note.date_created.strftime('%d.%m.%Y') }}</small>
+                            </div>
+                            <p class="mb-1">{{ note.content[:50] }}...</p>
+                            <small>Автор: {{ note.author.name }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ url_for('note.personal_notes') }}" class="btn btn-outline-primary mt-3">Все заметки</a>
+                {% else %}
+                    <p>Пока нет общих заметок</p>
+                    <a href="{{ url_for('note.add_note') }}" class="btn btn-primary">Добавить заметку</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Цели -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-check-circle"></i> Цели</h5>
+            </div>
+            <div class="card-body">
+                {% if goals %}
+                    <div class="list-group">
+                        {% for goal in goals[:3] %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ goal.title }}</h6>
+                                {% if goal.deadline %}
+                                    <small>До {{ goal.deadline.strftime('%d.%m.%Y') }}</small>
+                                {% endif %}
+                            </div>
+                            <p class="mb-1">{{ goal.description[:50] }}...</p>
+                            <div class="progress mt-2">
+                                <div class="progress-bar {% if goal.is_completed %}bg-success{% else %}bg-info{% endif %}" 
+                                     role="progressbar" style="width: {% if goal.is_completed %}100%{% else %}50%{% endif %}" 
+                                     aria-valuenow="{% if goal.is_completed %}100{% else %}50{% endif %}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {% if goal.is_completed %}Выполнено!{% else %}В процессе{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ url_for('goal.list_goals') }}" class="btn btn-outline-info mt-3">Все цели</a>
+                {% else %}
+                    <p>У вас пока нет общих целей</p>
+                    <a href="{{ url_for('goal.add_goal') }}" class="btn btn-info">Добавить цель</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Ближайшие события -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"> Ближайшие события</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_events %}
+                    <div class="list-group">
+                        {% for event in upcoming_events %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ event.title }}</h6>
+                                <small>{{ event.date.strftime('%d.%m.%Y %H:%M') }}</small>
+                            </div>
+                            {% if event.description %}
+                                <p class="mb-1">{{ event.description[:50] }}{% if event.description|length > 50 %}...{% endif %}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ url_for('calendar.view_calendar') }}" class="btn btn-outline-success mt-3">Весь календарь</a>
+                {% else %}
+                    <p>Ближайших событий нет</p>
+                    <a href="{{ url_for('calendar.add_event') }}" class="btn btn-success">Добавить событие</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
