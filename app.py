@@ -1,5 +1,4 @@
 from flask import Flask, render_template, redirect, url_for, session
-from werkzeug.security import generate_password_hash
 from datetime import datetime
 import os
 from config import Config
